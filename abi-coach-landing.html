@@ -1,0 +1,1121 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Abi-Coach — Die 1,0 beginnt heute</title>
+<meta name="description" content="Dein persönlicher KI-Tutor für das Abitur 2027–2030. Fachspezifisches Feedback, Fehler-Gedächtnis, echte Abituraufgaben.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700;800&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --bg2: #111118;
+    --bg3: #18181f;
+    --card: #1e1e28;
+    --border: rgba(255,255,255,0.07);
+    --border2: rgba(255,255,255,0.12);
+    --teal: #00e5c3;
+    --teal2: rgba(0,229,195,0.12);
+    --red: #ef4444;
+    --amber: #fbbf24;
+    --green: #22c55e;
+    --t1: #ffffff;
+    --t2: rgba(255,255,255,0.75);
+    --t3: rgba(255,255,255,0.45);
+    --t4: rgba(255,255,255,0.25);
+    --sans: 'Space Grotesk', sans-serif;
+    --display: 'Syne', sans-serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--t1);
+    font-family: var(--sans);
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* ── NOISE TEXTURE ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: .4;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(10,10,15,0.85);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-logo {
+    font-family: var(--display);
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--t1);
+    letter-spacing: -.02em;
+  }
+  .nav-logo span { color: var(--teal); }
+  .nav-cta {
+    background: var(--teal);
+    color: #000;
+    font-family: var(--sans);
+    font-size: 13px;
+    font-weight: 700;
+    padding: 8px 18px;
+    border-radius: 999px;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    transition: opacity .15s;
+  }
+  .nav-cta:hover { opacity: .85; }
+
+  /* ── HERO ── */
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 120px 24px 80px;
+    overflow: hidden;
+  }
+
+  /* Glow background */
+  .hero::after {
+    content: '';
+    position: absolute;
+    top: 30%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(0,229,195,0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--teal2);
+    border: 1px solid rgba(0,229,195,0.25);
+    border-radius: 999px;
+    padding: 6px 14px;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--teal);
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    margin-bottom: 28px;
+    position: relative;
+    z-index: 1;
+  }
+  .badge-dot {
+    width: 6px; height: 6px;
+    background: var(--teal);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: .5; transform: scale(1.3); }
+  }
+
+  .hero-title {
+    font-family: var(--display);
+    font-size: clamp(42px, 8vw, 80px);
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -.03em;
+    margin-bottom: 20px;
+    position: relative;
+    z-index: 1;
+  }
+  .hero-title .accent { color: var(--teal); }
+  .hero-title .strike {
+    text-decoration: line-through;
+    color: var(--t4);
+    font-size: 0.6em;
+  }
+
+  .hero-sub {
+    font-size: clamp(16px, 2.5vw, 20px);
+    color: var(--t2);
+    max-width: 560px;
+    margin: 0 auto 36px;
+    line-height: 1.65;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ── FORM ── */
+  .hero-form {
+    display: flex;
+    gap: 8px;
+    max-width: 460px;
+    width: 100%;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+  }
+  .hero-form input {
+    flex: 1;
+    background: var(--bg3);
+    border: 1.5px solid var(--border2);
+    border-radius: 12px;
+    padding: 14px 18px;
+    font-size: 14px;
+    color: var(--t1);
+    font-family: var(--sans);
+    outline: none;
+    transition: border-color .2s;
+  }
+  .hero-form input:focus { border-color: var(--teal); }
+  .hero-form input::placeholder { color: var(--t4); }
+  .hero-form button {
+    background: var(--teal);
+    color: #000;
+    font-family: var(--display);
+    font-size: 14px;
+    font-weight: 800;
+    padding: 14px 22px;
+    border-radius: 12px;
+    border: none;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: opacity .15s, transform .15s;
+  }
+  .hero-form button:hover { opacity: .88; transform: translateY(-1px); }
+  .hero-form button:active { transform: translateY(0); }
+
+  .hero-note {
+    margin-top: 12px;
+    font-size: 12px;
+    color: var(--t4);
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Success state */
+  .success-msg {
+    display: none;
+    background: rgba(34,197,94,0.1);
+    border: 1.5px solid rgba(34,197,94,0.3);
+    border-radius: 12px;
+    padding: 14px 20px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--green);
+    max-width: 460px;
+    margin: 0 auto;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ── SOCIAL PROOF ── */
+  .social-proof {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 48px;
+    position: relative;
+    z-index: 1;
+  }
+  .avatars {
+    display: flex;
+  }
+  .avatar {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    border: 2px solid var(--bg);
+    margin-left: -8px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--card);
+  }
+  .avatars .avatar:first-child { margin-left: 0; }
+  .proof-text {
+    font-size: 13px;
+    color: var(--t3);
+  }
+  .proof-text strong { color: var(--t2); }
+
+  /* ── SECTION ── */
+  section {
+    position: relative;
+    z-index: 1;
+    padding: 100px 24px;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  .section-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--teal);
+    margin-bottom: 14px;
+  }
+  .section-title {
+    font-family: var(--display);
+    font-size: clamp(28px, 5vw, 48px);
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -.02em;
+    margin-bottom: 16px;
+  }
+  .section-sub {
+    font-size: 17px;
+    color: var(--t2);
+    max-width: 520px;
+    line-height: 1.65;
+    margin-bottom: 56px;
+  }
+
+  /* ── PROBLEM SECTION ── */
+  .problem-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-bottom: 64px;
+  }
+  .problem-card {
+    background: var(--card);
+    border: 1.5px solid var(--border);
+    border-radius: 16px;
+    padding: 20px;
+  }
+  .problem-icon { font-size: 24px; margin-bottom: 10px; }
+  .problem-card h3 {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--t1);
+    margin-bottom: 6px;
+  }
+  .problem-card p {
+    font-size: 13px;
+    color: var(--t3);
+    line-height: 1.6;
+  }
+
+  /* ── FEATURES ── */
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+  }
+  .feat-card {
+    background: var(--card);
+    border: 1.5px solid var(--border);
+    border-radius: 20px;
+    padding: 28px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color .2s, transform .2s;
+  }
+  .feat-card:hover {
+    border-color: rgba(0,229,195,0.3);
+    transform: translateY(-3px);
+  }
+  .feat-card.highlight {
+    border-color: rgba(0,229,195,0.3);
+    background: linear-gradient(135deg, rgba(0,229,195,0.06) 0%, var(--card) 60%);
+  }
+  .feat-card::before {
+    content: '';
+    position: absolute;
+    top: 0; right: 0;
+    width: 120px; height: 120px;
+    background: radial-gradient(circle, rgba(0,229,195,0.06) 0%, transparent 70%);
+  }
+  .feat-icon {
+    font-size: 28px;
+    margin-bottom: 14px;
+  }
+  .feat-card h3 {
+    font-family: var(--display);
+    font-size: 18px;
+    font-weight: 800;
+    margin-bottom: 8px;
+    letter-spacing: -.01em;
+  }
+  .feat-card p {
+    font-size: 14px;
+    color: var(--t3);
+    line-height: 1.7;
+  }
+  .feat-tag {
+    display: inline-block;
+    background: var(--teal2);
+    color: var(--teal);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 999px;
+    margin-top: 14px;
+  }
+
+  /* ── HOW IT WORKS ── */
+  .steps {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    max-width: 680px;
+  }
+  .step {
+    display: flex;
+    gap: 24px;
+    padding-bottom: 40px;
+    position: relative;
+  }
+  .step:last-child { padding-bottom: 0; }
+  .step:not(:last-child)::before {
+    content: '';
+    position: absolute;
+    left: 19px;
+    top: 44px;
+    bottom: 0;
+    width: 2px;
+    background: linear-gradient(to bottom, var(--border2), transparent);
+  }
+  .step-num {
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    background: var(--card);
+    border: 1.5px solid var(--border2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--display);
+    font-size: 15px;
+    font-weight: 800;
+    color: var(--teal);
+    flex-shrink: 0;
+  }
+  .step-content h3 {
+    font-size: 17px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    padding-top: 8px;
+  }
+  .step-content p {
+    font-size: 14px;
+    color: var(--t3);
+    line-height: 1.7;
+  }
+  .step-content .chat-bubble {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px 14px;
+    font-size: 13px;
+    color: var(--t2);
+    margin-top: 12px;
+    font-style: italic;
+    line-height: 1.6;
+  }
+  .chat-bubble.ai {
+    border-left: 2px solid var(--teal);
+    color: var(--t2);
+  }
+
+  /* ── COMPARISON ── */
+  .compare-table {
+    width: 100%;
+    border-collapse: collapse;
+    border-radius: 16px;
+    overflow: hidden;
+  }
+  .compare-table th {
+    background: var(--card);
+    padding: 14px 20px;
+    font-size: 13px;
+    font-weight: 700;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+  .compare-table th:first-child { color: var(--t3); }
+  .compare-table th.ours { color: var(--teal); }
+  .compare-table th.theirs { color: var(--t3); }
+  .compare-table td {
+    padding: 14px 20px;
+    font-size: 13px;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg3);
+  }
+  .compare-table tr:last-child td { border-bottom: none; }
+  .compare-table td:first-child { color: var(--t2); font-weight: 500; }
+  .tick { color: var(--teal); font-weight: 700; }
+  .cross { color: var(--t4); }
+
+  /* ── COUNTDOWN ── */
+  .countdown-bar {
+    background: linear-gradient(135deg, rgba(0,229,195,0.08), rgba(0,229,195,0.02));
+    border: 1.5px solid rgba(0,229,195,0.2);
+    border-radius: 20px;
+    padding: 40px;
+    text-align: center;
+    margin: 0 auto;
+    max-width: 700px;
+  }
+  .countdown-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--teal);
+    margin-bottom: 16px;
+  }
+  .countdown-title {
+    font-family: var(--display);
+    font-size: clamp(22px, 4vw, 36px);
+    font-weight: 800;
+    margin-bottom: 8px;
+  }
+  .countdown-sub {
+    font-size: 15px;
+    color: var(--t3);
+    margin-bottom: 28px;
+  }
+  .countdown-digits {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+  }
+  .digit-block {
+    text-align: center;
+  }
+  .digit-num {
+    font-family: var(--display);
+    font-size: 44px;
+    font-weight: 800;
+    color: var(--teal);
+    line-height: 1;
+  }
+  .digit-lbl {
+    font-size: 11px;
+    color: var(--t4);
+    margin-top: 4px;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+  }
+  .digit-sep {
+    font-size: 36px;
+    color: var(--t4);
+    line-height: 1.2;
+    align-self: flex-start;
+    padding-top: 4px;
+  }
+
+  /* ── FAQ ── */
+  .faq-list { max-width: 680px; }
+  .faq-item {
+    border-bottom: 1px solid var(--border);
+    overflow: hidden;
+  }
+  .faq-q {
+    width: 100%;
+    background: none;
+    border: none;
+    text-align: left;
+    padding: 20px 0;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--t1);
+    cursor: pointer;
+    font-family: var(--sans);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+  }
+  .faq-q:hover { color: var(--teal); }
+  .faq-arrow {
+    color: var(--t4);
+    transition: transform .3s;
+    flex-shrink: 0;
+    font-size: 18px;
+  }
+  .faq-item.open .faq-arrow { transform: rotate(45deg); color: var(--teal); }
+  .faq-a {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height .4s ease;
+    font-size: 14px;
+    color: var(--t3);
+    line-height: 1.75;
+  }
+  .faq-a-inner { padding-bottom: 20px; }
+  .faq-item.open .faq-a { max-height: 300px; }
+
+  /* ── FOOTER CTA ── */
+  .footer-cta {
+    background: var(--bg2);
+    border-top: 1px solid var(--border);
+    padding: 80px 24px;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+  }
+  .footer-cta::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 50%;
+    transform: translateX(-50%);
+    width: 400px; height: 300px;
+    background: radial-gradient(circle at top, rgba(0,229,195,0.05), transparent);
+    pointer-events: none;
+  }
+  .footer-cta h2 {
+    font-family: var(--display);
+    font-size: clamp(28px, 5vw, 48px);
+    font-weight: 800;
+    letter-spacing: -.02em;
+    margin-bottom: 12px;
+  }
+  .footer-cta p {
+    font-size: 17px;
+    color: var(--t3);
+    margin-bottom: 32px;
+  }
+  .footer-form {
+    display: flex;
+    gap: 8px;
+    max-width: 420px;
+    margin: 0 auto;
+  }
+  .footer-form input {
+    flex: 1;
+    background: var(--bg3);
+    border: 1.5px solid var(--border2);
+    border-radius: 12px;
+    padding: 14px 18px;
+    font-size: 14px;
+    color: var(--t1);
+    font-family: var(--sans);
+    outline: none;
+    transition: border-color .2s;
+  }
+  .footer-form input:focus { border-color: var(--teal); }
+  .footer-form input::placeholder { color: var(--t4); }
+  .footer-form button {
+    background: var(--teal);
+    color: #000;
+    font-family: var(--display);
+    font-size: 14px;
+    font-weight: 800;
+    padding: 14px 22px;
+    border-radius: 12px;
+    border: none;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: opacity .15s;
+  }
+  .footer-form button:hover { opacity: .88; }
+
+  footer {
+    background: var(--bg);
+    border-top: 1px solid var(--border);
+    padding: 24px;
+    text-align: center;
+    font-size: 12px;
+    color: var(--t4);
+    position: relative;
+    z-index: 1;
+  }
+  footer a { color: var(--t3); text-decoration: none; }
+
+  /* ── DIVIDER ── */
+  .divider {
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--border2), transparent);
+    margin: 0 auto;
+  }
+
+  /* ── MOBILE ── */
+  @media (max-width: 600px) {
+    .hero-form {
+      flex-direction: column;
+    }
+    .hero-form button {
+      width: 100%;
+    }
+    .footer-form {
+      flex-direction: column;
+    }
+    .footer-form button {
+      width: 100%;
+    }
+    .compare-table { font-size: 12px; }
+    .compare-table td, .compare-table th { padding: 10px 12px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">Abi<span>Coach</span></div>
+  <a href="#zugang" class="nav-cta">Jetzt testen →</a>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-badge">
+    <div class="badge-dot"></div>
+    Abitur 2027 · 2028 · 2029 · 2030
+  </div>
+
+  <h1 class="hero-title">
+    <span class="strike">Nachhilfe.</span><br>
+    Dein KI-Tutor<br>
+    der <span class="accent">mitdenkt.</span>
+  </h1>
+
+  <p class="hero-sub">
+    Abi-Coach merkt sich jeden Fehler den du machst. Beim nächsten Mal fragt er genau dort nach. Kein anderes Tool tut das.
+  </p>
+
+  <div class="hero-form" id="hero-form">
+    <input type="email" id="hero-email" placeholder="deine@email.de" autocomplete="email">
+    <button onclick="submitForm('hero')">Kostenlos testen</button>
+  </div>
+  <div class="success-msg" id="hero-success">
+    ✓ Link wird zugeschickt — du hörst heute von mir.
+  </div>
+  <p class="hero-note">Kostenlos · Kein Account nötig · Direkt im Browser</p>
+
+  <div class="social-proof">
+    <div class="avatars">
+      <div class="avatar">🧑</div>
+      <div class="avatar">👩</div>
+      <div class="avatar">🧑‍🦱</div>
+      <div class="avatar">👨‍🦳</div>
+    </div>
+    <span class="proof-text"><strong>Erste Schüler</strong> testen gerade die Beta</span>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- PROBLEM -->
+<section>
+  <div class="section-label">Das echte Problem</div>
+  <h2 class="section-title">Du lernst. Aber weißt du<br>ob du das Richtige lernst?</h2>
+  <p class="section-sub">Die meisten Schüler lesen Zusammenfassungen und schauen Videos. Das Gefühl von Produktivität ist nicht dasselbe wie echtes Verstehen.</p>
+
+  <div class="problem-grid">
+    <div class="problem-card">
+      <div class="problem-icon">😶</div>
+      <h3>Lesen ohne Prüfen</h3>
+      <p>Du liest, nickst, denkst du verstehst — und merkst erst in der Prüfung dass du es nicht kannst.</p>
+    </div>
+    <div class="problem-card">
+      <div class="problem-icon">🔄</div>
+      <h3>Gleiche Fehler wieder</h3>
+      <p>Niemand sagt dir beim nächsten Mal: "Das ist genau das was du letzten Donnerstag falsch hattest."</p>
+    </div>
+    <div class="problem-card">
+      <div class="problem-icon">📖</div>
+      <h3>Generisches Feedback</h3>
+      <p>ChatGPT kann alles — außer wissen was im Deutsch-Abitur 2027 bewertet wird. Oder wo du stehst.</p>
+    </div>
+    <div class="problem-card">
+      <div class="problem-icon">💸</div>
+      <h3>Nachhilfe kostet</h3>
+      <p>50–80 € pro Stunde. Für eine Person, einen Abend, ein Thema. Und kein Gedächtnis bis nächste Woche.</p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- FEATURES -->
+<section>
+  <div class="section-label">Was Abi-Coach anders macht</div>
+  <h2 class="section-title">Nicht allwissend.<br>Aber vergisstnichts.</h2>
+  <p class="section-sub">Drei Dinge die kein anderes Tool für das deutsche Abitur macht.</p>
+
+  <div class="features-grid">
+    <div class="feat-card highlight">
+      <div class="feat-icon">🧠</div>
+      <h3>Fehler-Gedächtnis</h3>
+      <p>Jede falsche Antwort wird gespeichert. Beim nächsten Öffnen bringt der Coach sie wieder — genau dann wenn du sie vergessen hättest.</p>
+      <span class="feat-tag">Wichtigstes Feature</span>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">🎯</div>
+      <h3>26 Fächer, echte Kriterien</h3>
+      <p>Deutsch: Mittel → Beleg → Wirkung. Geschichte: 5-Schritte Quellenanalyse. Mathe: vollständiger Rechenweg. Kein generisches Feedback.</p>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">📍</div>
+      <h3>Dein Bundesland. Dein Termin.</h3>
+      <p>Bayern, NRW, BW — alle 16 Bundesländer mit echten Abiturterminen. Der Countdown zeigt dir wie viele Tage wirklich noch bleiben.</p>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">🎓</div>
+      <h3>Abiturklausur simulieren</h3>
+      <p>Komplette Musterklausur, Echtzeit-Timer (LK: 300 Min, GK: 225 Min), danach vollständige Bewertung mit Punkten und Note.</p>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">🎤</div>
+      <h3>Mündliche Prüfung üben</h3>
+      <p>KI-Prüfer stellt Fragen, hakt nach, gibt Zwischenfeedback. Am Ende: Note und konkretes Feedback. Für Kolloquium und mündliche Prüfungen.</p>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">🔥</div>
+      <h3>Streak-System</h3>
+      <p>Jeden Tag lernen baut deinen Streak auf. Wenn du abbrichst: roter Banner. "Streak verloren. Noch 47 Tage bis Deutsch-Abitur." Kein Schönreden.</p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- HOW IT WORKS -->
+<section>
+  <div class="section-label">So funktioniert es</div>
+  <h2 class="section-title">Öffnen. Fragen.<br>Verstehen. Wiederholen.</h2>
+  <p class="section-sub">Keine App die du einrichten musst. Kein Account. Kein Abo. Einfach lernen.</p>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-content">
+        <h3>Du öffnest die App — der Coach empfiehlt</h3>
+        <p>Kein Dashboard das dich überfordert. Nur: "Guten Abend, Lena. Noch 47 Tage bis Deutsch-Abitur. Kurvendiskussion wartet noch."</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-content">
+        <h3>Du antwortest — der Coach reagiert</h3>
+        <p>Nicht "richtig/falsch". Konkret: was fehlt, welcher Begriff fehlt, welcher Schritt vergessen wurde.</p>
+        <div class="chat-bubble ai">
+          "Guter Ansatz — aber du hast den Beleg vergessen. Welches Zitat aus dem Text stützt deine Interpretation der Metapher?"
+        </div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-content">
+        <h3>Dein Fehler wird gemerkt</h3>
+        <p>Morgen fragt der Coach genau dort nach. Übermorgen auch. Bis du es kannst. Dann nie wieder.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-content">
+        <h3>Am Ende: Klausur schreiben</h3>
+        <p>Komplette Abiturklausur mit Timer. KI bewertet nach echten Kriterien. Du weißt wo du stehst.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- COMPARISON -->
+<section>
+  <div class="section-label">Vergleich</div>
+  <h2 class="section-title">Was du sonst hättest<br>nutzen müssen.</h2>
+
+  <div style="overflow-x:auto; border-radius: 16px; border: 1px solid var(--border)">
+    <table class="compare-table">
+      <thead>
+        <tr>
+          <th>Feature</th>
+          <th class="ours">Abi-Coach</th>
+          <th class="theirs">ChatGPT</th>
+          <th class="theirs">Nachhilfe</th>
+          <th class="theirs">Lernvideos</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Merkt sich Fehler</td>
+          <td class="tick">✓</td>
+          <td class="cross">✗</td>
+          <td class="tick">✓</td>
+          <td class="cross">✗</td>
+        </tr>
+        <tr>
+          <td>Deutsch-Abi Kriterien</td>
+          <td class="tick">✓</td>
+          <td class="cross">✗</td>
+          <td class="tick">✓</td>
+          <td class="cross">✗</td>
+        </tr>
+        <tr>
+          <td>Alle 16 Bundesländer</td>
+          <td class="tick">✓</td>
+          <td class="cross">✗</td>
+          <td class="cross">✗</td>
+          <td class="cross">✗</td>
+        </tr>
+        <tr>
+          <td>Klausur mit Timer</td>
+          <td class="tick">✓</td>
+          <td class="cross">✗</td>
+          <td class="cross">✗</td>
+          <td class="cross">✗</td>
+        </tr>
+        <tr>
+          <td>24/7 verfügbar</td>
+          <td class="tick">✓</td>
+          <td class="tick">✓</td>
+          <td class="cross">✗</td>
+          <td class="tick">✓</td>
+        </tr>
+        <tr>
+          <td>Kosten/Monat</td>
+          <td class="tick">0 €</td>
+          <td>0–20 €</td>
+          <td class="cross">200–320 €</td>
+          <td>0 €</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- COUNTDOWN -->
+<section style="text-align:center">
+  <div class="countdown-bar">
+    <div class="countdown-label">Bayerisches Abitur 2027 · Deutsch</div>
+    <div class="countdown-title">Wie viele Tage hast du noch?</div>
+    <div class="countdown-sub">Countdown bis zum Deutsch-Abitur in Bayern (27. April 2027)</div>
+    <div class="countdown-digits">
+      <div class="digit-block">
+        <div class="digit-num" id="cnt-d">—</div>
+        <div class="digit-lbl">Tage</div>
+      </div>
+      <div class="digit-sep">:</div>
+      <div class="digit-block">
+        <div class="digit-num" id="cnt-h">—</div>
+        <div class="digit-lbl">Stunden</div>
+      </div>
+      <div class="digit-sep">:</div>
+      <div class="digit-block">
+        <div class="digit-num" id="cnt-m">—</div>
+        <div class="digit-lbl">Minuten</div>
+      </div>
+    </div>
+    <a href="#zugang" class="nav-cta" style="display:inline-block;text-decoration:none;padding:14px 28px;font-size:15px;border-radius:14px">Jetzt anfangen →</a>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- FAQ -->
+<section>
+  <div class="section-label">Häufige Fragen</div>
+  <h2 class="section-title" style="margin-bottom:40px">Was du wissen willst.</h2>
+
+  <div class="faq-list">
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        Kostet die App wirklich nichts?
+        <span class="faq-arrow">+</span>
+      </button>
+      <div class="faq-a">
+        <div class="faq-a-inner">
+          Ja, komplett kostenlos. Kein Abo, kein Account, kein Paywall. Die App läuft direkt im Browser. Du brauchst einen eigenen Anthropic API-Key um die KI-Funktionen zu nutzen — der erste Monat ist bei Anthropic kostenlos.
+        </div>
+      </div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        Für welche Bundesländer funktioniert es?
+        <span class="faq-arrow">+</span>
+      </button>
+      <div class="faq-a">
+        <div class="faq-a-inner">
+          Alle 16 Bundesländer sind eingebaut — mit fachspezifischen Abiturterminen, Klausurzeiten und Lehrplan-Anpassungen. Bayern, NRW, Baden-Württemberg, Berlin, Hamburg, und alle anderen.
+        </div>
+      </div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        Welche Fächer werden unterstützt?
+        <span class="faq-arrow">+</span>
+      </button>
+      <div class="faq-a">
+        <div class="faq-a-inner">
+          17 Fächer mit vollständigem Curriculum: Deutsch, Mathematik, Englisch, Biologie, Chemie, Physik, Geschichte, Philosophie, Sozialkunde, Musik, Ethik, Kath. Religion, Ev. Religion, Geographie, Wirtschaft, Kunst und Sport. Plus 40 weitere Fächer im Tutor-Modus.
+        </div>
+      </div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        Was ist das "Fehler-Gedächtnis"?
+        <span class="faq-arrow">+</span>
+      </button>
+      <div class="faq-a">
+        <div class="faq-a-inner">
+          Jede Antwort die du gibst und die nicht ganz richtig war, wird gespeichert — mit Thema, Datum und deiner Antwort. Beim nächsten Öffnen sieht der KI-Coach deine Schwachstellen und bringt sie gezielt wieder. Das ist der Unterschied zwischen Wiederholen und echtem Lernen.
+        </div>
+      </div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        Gilt das auch für Abitur 2028, 2029 und 2030?
+        <span class="faq-arrow">+</span>
+      </button>
+      <div class="faq-a">
+        <div class="faq-a-inner">
+          Ja. Die App unterstützt alle vier Jahrgänge mit unterschiedlichen Schwierigkeitsgraden und Anforderungen. Ab 2030 gelten die vollen KMK-Reformen — der Coach wird entsprechend strenger und bereitet auf die einheitlicheren bundesweiten Aufgaben vor.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER CTA -->
+<div class="footer-cta" id="zugang">
+  <h2>Bereit für die <span style="color:var(--teal)">1,0</span>?</h2>
+  <p>Kein Abo. Kein Account. Direkt starten.</p>
+
+  <div class="footer-form" id="footer-form">
+    <input type="email" id="footer-email" placeholder="deine@email.de" autocomplete="email">
+    <button onclick="submitForm('footer')">App erhalten →</button>
+  </div>
+  <div class="success-msg" id="footer-success" style="max-width:420px">
+    ✓ Du bekommst den Link heute noch. Viel Erfolg!
+  </div>
+  <p style="font-size:12px;color:var(--t4);margin-top:14px">Kostenlos · Kein Spam · Abmeldung jederzeit</p>
+</div>
+
+<footer>
+  <p>© 2026 Abi-Coach · <a href="#">Datenschutz</a> · <a href="#">Impressum</a> · Kein Abi ohne Coach.</p>
+</footer>
+
+<script>
+// ── COUNTDOWN ──────────────────────────────────────────────
+function updateCountdown() {
+  var target = new Date('2027-04-27T08:00:00');
+  var now = new Date();
+  var diff = target - now;
+
+  if (diff <= 0) {
+    document.getElementById('cnt-d').textContent = '0';
+    document.getElementById('cnt-h').textContent = '0';
+    document.getElementById('cnt-m').textContent = '0';
+    return;
+  }
+
+  var days = Math.floor(diff / (1000 * 60 * 60 * 24));
+  var hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+  var mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+
+  document.getElementById('cnt-d').textContent = days;
+  document.getElementById('cnt-h').textContent = hours;
+  document.getElementById('cnt-m').textContent = mins;
+}
+updateCountdown();
+setInterval(updateCountdown, 30000);
+
+// ── FORM ──────────────────────────────────────────────────
+function submitForm(which) {
+  var emailEl = document.getElementById(which + '-email');
+  var email = emailEl ? emailEl.value.trim() : '';
+
+  if (!email || !email.includes('@')) {
+    emailEl.style.borderColor = 'var(--red)';
+    emailEl.placeholder = 'Bitte gültige E-Mail eingeben';
+    setTimeout(function() {
+      emailEl.style.borderColor = '';
+      emailEl.placeholder = 'deine@email.de';
+    }, 2000);
+    return;
+  }
+
+  // Formspree
+  fetch('https://formspree.io/f/mdajovka', {
+    method: 'POST',
+    body: JSON.stringify({email: email}),
+    headers: {'Content-Type': 'application/json'}
+  }).catch(function(){});
+
+  // Zeige Erfolg
+  document.getElementById(which + '-form').style.display = 'none';
+  document.getElementById(which + '-success').style.display = 'block';
+
+  // Optional: speichere in localStorage für Analytics
+  try {
+    var leads = JSON.parse(localStorage.getItem('abi_leads') || '[]');
+    leads.push({ email: email, date: new Date().toISOString(), source: which });
+    localStorage.setItem('abi_leads', JSON.stringify(leads));
+  } catch(e) {}
+}
+
+// Enter-Taste
+document.getElementById('hero-email').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') submitForm('hero');
+});
+document.getElementById('footer-email').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') submitForm('footer');
+});
+
+// ── FAQ ──────────────────────────────────────────────────
+function toggleFaq(btn) {
+  var item = btn.parentElement;
+  var wasOpen = item.classList.contains('open');
+  // Schließe alle
+  document.querySelectorAll('.faq-item.open').forEach(function(el) {
+    el.classList.remove('open');
+  });
+  if (!wasOpen) item.classList.add('open');
+}
+
+// ── SCROLL ANIMATIONS ─────────────────────────────────────
+var observer = new IntersectionObserver(function(entries) {
+  entries.forEach(function(entry) {
+    if (entry.isIntersecting) {
+      entry.target.style.opacity = '1';
+      entry.target.style.transform = 'translateY(0)';
+    }
+  });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.feat-card, .problem-card, .step').forEach(function(el) {
+  el.style.opacity = '0';
+  el.style.transform = 'translateY(20px)';
+  el.style.transition = 'opacity .5s ease, transform .5s ease';
+  observer.observe(el);
+});
+</script>
+</body>
+</html>

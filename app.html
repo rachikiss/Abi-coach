@@ -5530,11 +5530,11 @@ function getExamSystemPrompt(fach, bl, niveau){
     var base64=dataUrl.split(",")[1]||"";
     var mtype="image/jpeg";
     hideEmpty();
-    bubble("u","<div style='font-size:11px;color:rgba(0,0,0,.6);margin-bottom:4px'>í ½í³– Buchseite gesendet</div><img src='"+dataUrl+"' style='max-width:100%;border-radius:10px'>");
+    bubble("u","<div style='font-size:11px;color:rgba(0,0,0,.6);margin-bottom:4px'>ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Buchseite gesendet</div><img src='"+dataUrl+"' style='max-width:100%;border-radius:10px'>");
     var key=(typeof window.getApiKey==="function")?window.getApiKey():"";
     if(!key){ bubble("c","FÃ¼r die Foto-Analyse brauchst du einen Gemini API-Key (âš™ï¸ Einstellungen). Du kannst die Aufgabe aber auch einfach abtippen â€“ das geht genauso!"); return; }
     BUSY=true; typing(true);
-    var bbl=bubble("c","<span style='color:var(--t3)'>í ½í´ Ich schaÃ¼ mir deine Seite anâ€¦</span>");
+    var bbl=bubble("c","<span style='color:var(--t3)'>ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ich schaÃ¼ mir deine Seite anâ€¦</span>");
     var instr="Das ist ein Foto/Scan meiner Schulbuchseite oder Hausaufgabe. Lies die Aufgabe(n) genau. WÃ¤hle die erste sinnvolle Aufgabe, erkenne das Thema und starte PHASE 1: fÃ¼hre mich mit EINER sokratischen Leitfrage in den ersten Schritt. LÃ¶se die Aufgabe NICHT vollstÃ¤ndig. Vergiss die SteÃ¼rzeile nicht.";
     fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key="+key,{
       method:"POST", headers:{"Content-Type":"application/json"},
@@ -6258,7 +6258,7 @@ window.abiMatrix = function(fach, mode){
 <!-- Kamera-Modal -->
 <div id="cam-overlay" class="cam-overlay">
   <div class="cam-header">
-    <div class="cam-title">í ½í³· Buchseite fotografieren</div>
+    <div class="cam-title">ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Buchseite fotografieren</div>
     <button class="cam-close" onclick="closeCamera()">âœ•;</button>
   </div>
   <div class="cam-vwrap">
@@ -6271,9 +6271,9 @@ window.abiMatrix = function(fach, mode){
   </div>
   <div class="cam-footer">
     <div class="cam-row">
-      <button class="cam-btn" id="cam-torch" onclick="toggleTorch()" title="Taschenlampe">í ½í´¦;</button>
+      <button class="cam-btn" id="cam-torch" onclick="toggleTorch()" title="Taschenlampe">ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½;</button>
       <button class="cam-shutter" onclick="takePhoto()" title="Foto aufnehmen"></button>
-      <button class="cam-btn" onclick="switchCamera()" title="Kamera wechseln">í ½í´„;</button>
+      <button class="cam-btn" onclick="switchCamera()" title="Kamera wechseln">ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½;</button>
     </div>
     <div class="cam-row" style="padding:0 10px">
       <span style="font-size:12px;color:rgba(255,255,255,.6)">Zoom</span>
@@ -6288,7 +6288,7 @@ window.abiMatrix = function(fach, mode){
 <div id="cam-preview" class="cam-preview-wrap">
   <img id="cam-pimg" class="cam-preview-img" alt="Kameravorschau">
   <div class="cam-preview-btns">
-    <button class="cam-pb retake" onclick="retakePhoto()">í ½í´„; Neu</button>
+    <button class="cam-pb retake" onclick="retakePhoto()">ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½; Neu</button>
     <button class="cam-pb use" onclick="confirmPhoto()">âœ…; Verwenden</button>
   </div>
 </div>
